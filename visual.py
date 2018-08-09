@@ -3,7 +3,7 @@ import numpy as np
 import json
 from operator import itemgetter
 from matplotlib.widgets import Button
-from mpl_toolkits.axes_grid.inset_locator import inset_axes
+
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import math
@@ -85,10 +85,36 @@ for app in countAppDict:
             verticalalignment='top',
             transform = ax.transAxes)
 
+# Fixing random state for reproducibility
+np.random.seed(19680801)
 
+# N = 50
+# x = np.random.rand(N)
+# y = np.random.rand(N)
+# colors = np.random.rand(N)
+# area = (30 * np.random.rand(N))**2  # 0 to 15 point radii
 
-# textplot.axis('off')
-# textplot.axes.get_xaxis().set_visible(False)
-# textplot.axes.get_yaxis().set_visible(False)
+x = []
+y = []
+area = []
+genre_data = appDict['Games']
+N = len(genre_data)
+colors = np.random.rand(N)
+
+print(N)
+for app in genre_data:
+    def getRandomXinRange(user_rating):
+        u = user_rating*500
+        v = (np.random.randint(u,u+150))/500
+        return v
+    def getRandomYinRange(price):
+        u = price*500
+        v = (np.random.randint(u,u+150))/500
+        return v
+    x.append(getRandomXinRange(app['user_rating']))
+    y.append(getRandomYinRange(app['price']))
+    area.append(app['rating_count_tot']/1000)
+
+scatterplot.scatter(x, y, s=area, c=colors, alpha=0.5)
 
 plt.show()
