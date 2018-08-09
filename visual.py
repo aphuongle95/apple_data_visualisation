@@ -60,10 +60,11 @@ for i in tuple(range_num):
         fig.add_subplot(ax)
 
 count = 0
+# gap = 1/num_genre
 for app in countAppDict:
     ax = axes[count]
     count = count + 1
-    button = Button(ax, app[0] + str(app[1]))
+    button = Button(ax, "")
     # def next(self, event):
     #     self.ind += 1
     #     i = self.ind % len(freqs)
@@ -71,5 +72,23 @@ for app in countAppDict:
     #     l.set_ydata(ydata)
     #     plt.draw()
     # button.on_clicked(callback.next)
+
+    ax.text(0.1, 0.9,
+            app[0],
+            horizontalalignment='left',
+            verticalalignment='top',
+            transform = ax.transAxes)
+
+    ax.text(0.9, 0.9,
+            str(app[1]),
+            horizontalalignment='right',
+            verticalalignment='top',
+            transform = ax.transAxes)
+
+
+
+# textplot.axis('off')
+# textplot.axes.get_xaxis().set_visible(False)
+# textplot.axes.get_yaxis().set_visible(False)
 
 plt.show()
