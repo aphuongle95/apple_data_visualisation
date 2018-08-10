@@ -36,8 +36,8 @@ description_data.pop(0)
 countAppDict = {}
 appDict = {}
 
-print(description_data[0])
-print(data[0])
+# print(description_data[0])
+# print(data[0])
 
 def getDescription(app):
     for app_w_description in description_data:
