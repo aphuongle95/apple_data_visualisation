@@ -17,9 +17,6 @@ from wordcloud import WordCloud
 
 fig = plt.figure()
 
-scatterplot = fig.add_subplot(2,2,2)
-wordplot = fig.add_subplot(2,2,4)
-
 with open('apple_store.json') as f1:
     data = json.load(f1)
 
@@ -60,12 +57,17 @@ for app in data:
         countAppDict[genre] = 1
         appDict[genre] = [app]
 
-
 countAppDict = sorted(countAppDict.items(), key=itemgetter(1), reverse=True)
 
 num_genre = len(countAppDict)
 grid_col = math.ceil(num_genre/2)
-outer = gridspec.GridSpec(grid_col, 2, wspace=0, hspace=0)
+outer = gridspec.GridSpec(grid_col, 2, wspace=0.2, hspace=0,
+                width_ratios=[2, 3],
+                # height_ratios=[4, 1]
+                )
+divid = math.floor(grid_col/3*2)
+scatterplot = plt.subplot(outer[:divid-1, 1])
+wordplot = plt.subplot(outer[divid:, 1])
 
 range_num = []
 for x in range(grid_col):
@@ -74,7 +76,7 @@ for x in range(grid_col):
 axes = []
 for i in tuple(range_num):
     inner = gridspec.GridSpecFromSubplotSpec(2, 1,
-                    subplot_spec=outer[i], wspace=0, hspace=0)
+                    subplot_spec=outer[i], wspace=0, hspace=0,)
     for j in range(2):
         ax = plt.Subplot(fig, inner[j])
         # t = ax.text(0.5,0.5, 'outer=%d, inner=%d' % (i,j))
