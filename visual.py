@@ -79,20 +79,26 @@ for i in tuple(range_num):
                     subplot_spec=outer[i], wspace=0, hspace=0,)
     for j in range(2):
         ax = plt.Subplot(fig, inner[j])
-        if i==0 and j==0:
-            ax.set_facecolor('xkcd:salmon')
         ax.set_xticks([])
         ax.set_yticks([])
         axes.append(ax)
         fig.add_subplot(ax)
 
+def update_ax_face_color(selected):
+    for i in range(len(axes)):
+        ax = axes[i]
+        if i==selected:
+            ax.set_facecolor('xkcd:salmon')
+        else:
+            ax.set_facecolor('xkcd:white')
 count = 0
 # gap = 1/num_genre
+
+update_ax_face_color(0)
 for app in countAppDict:
     ax = axes[count]
     count = count + 1
     # button = Button(ax, "")
-
     ax.text(0.1, 0.9,
             app[0],
             horizontalalignment='left',
@@ -162,16 +168,20 @@ draw_subplots(genre_data)
 def onclick(event):
     for i in range(len(axes)):
         ax = axes[i]
+        found = False
+        selected = None
         if event.inaxes == ax:
-            ax.set_facecolor('xkcd:salmon')
+            found = True
+            selected = i
             scatterplot.cla()
             wordplot.cla()
             genre = countAppDict[i]
             print(genre[0])
             genre_data = appDict[genre[0]]
             draw_subplots(genre_data)
-        else:
-            ax.set_facecolor('xkcd:white')
+            break
+    if found:
+        update_ax_face_color(selected)
 
 def update_annot(label, label_pos_x, label_pos_y):
     annot.set_visible(True)
