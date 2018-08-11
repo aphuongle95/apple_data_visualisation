@@ -79,8 +79,8 @@ for i in tuple(range_num):
                     subplot_spec=outer[i], wspace=0, hspace=0,)
     for j in range(2):
         ax = plt.Subplot(fig, inner[j])
-        # t = ax.text(0.5,0.5, 'outer=%d, inner=%d' % (i,j))
-        # t.set_ha('center')
+        if i==0 and j==0:
+            ax.set_facecolor('xkcd:salmon')
         ax.set_xticks([])
         ax.set_yticks([])
         axes.append(ax)
@@ -123,11 +123,11 @@ def draw_subplots(genre_data):
     for app in genre_data:
         def getRandomXinRange(user_rating):
             u = user_rating*500
-            v = (np.random.randint(u,u+150))/500
+            v = (np.random.uniform(u-75,u+75))/500
             return v
         def getRandomYinRange(price):
             u = price*500
-            v = (np.random.randint(u,u+150))/500
+            v = (np.random.uniform(u-75,u+75))/500
             return v
         x.append(getRandomXinRange(app['user_rating']))
         y.append(getRandomYinRange(app['price']))
@@ -163,13 +163,15 @@ def onclick(event):
     for i in range(len(axes)):
         ax = axes[i]
         if event.inaxes == ax:
+            ax.set_facecolor('xkcd:salmon')
             scatterplot.cla()
             wordplot.cla()
             genre = countAppDict[i]
             print(genre[0])
             genre_data = appDict[genre[0]]
             draw_subplots(genre_data)
-            break
+        else:
+            ax.set_facecolor('xkcd:white')
 
 def update_annot(label, label_pos_x, label_pos_y):
     annot.set_visible(True)
