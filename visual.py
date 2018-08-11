@@ -9,6 +9,12 @@ import re
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import math
+import io
+from collections import Counter
+from os import path
+
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
 
 fig = plt.figure()
 
@@ -100,6 +106,7 @@ for app in countAppDict:
 
 np.random.seed(19680801)
 def draw_subplots(genre_data):
+    #scatter plot
     x = []
     y = []
     area = []
@@ -120,9 +127,25 @@ def draw_subplots(genre_data):
         area.append(app['rating_count_tot']/1000)
 
     scatterplot.scatter(x, y, s=area, c=colors, alpha=0.5)
+
+    #word cloud
+    d = path.dirname(__file__)
+
+    open('description_genre.txt', 'w').close()
+    f = open("description_genre.txt", "w")
+
+    for app in genre_data:
+        if 'description' in app:
+            f.write(app['description'])
+
+    text = io.open(path.join(d, 'description_genre.txt')).read()
+    font_path = path.join(d, 'Symbola.ttf')
+    word_cloud = WordCloud(font_path=font_path).generate(text)
+    wordplot.imshow(word_cloud)
+    wordplot.axis("off")
+
     plt.draw()
 
-#scatter plot
 genre_data = appDict['Games']
 draw_subplots(genre_data)
 def onclick(event):
@@ -130,6 +153,7 @@ def onclick(event):
         ax = axes[i]
         if event.inaxes == ax:
             scatterplot.cla()
+            wordplot.cla()
             genre = countAppDict[i]
             print(genre[0])
             genre_data = appDict[genre[0]]
@@ -138,32 +162,6 @@ def onclick(event):
 
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
 
-#word cloud
-import io
-from collections import Counter
-from os import path
-
-import matplotlib.pyplot as plt
-from wordcloud import WordCloud
-
-d = path.dirname(__file__)
-
-# open('description_genre.txt', 'w').close()
-# f = open("description_genre.txt", "w")
-
-# for app in genre_data:
-#     if 'description' in app:
-#         f.write(app['description'])
-
-# text = io.open(path.join(d, 'description_genre.txt')).read()
-# Generate a word cloud image
-# The Symbola font includes most emoji
-# font_path = path.join(d, 'Symbola.ttf')
-# word_cloud = WordCloud(font_path=font_path).generate(text)
-
-# Display the generated image:
-# wordplot.imshow(word_cloud)
-# wordplot.axis("off")
 
 plt.show()
 plt.draw()
