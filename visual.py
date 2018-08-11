@@ -12,8 +12,7 @@ import math
 import io
 from collections import Counter
 from os import path
-
-import matplotlib.pyplot as plt
+from matplotlib.text import Annotation
 from wordcloud import WordCloud
 
 fig = plt.figure()
@@ -126,7 +125,7 @@ def draw_subplots(genre_data):
         y.append(getRandomYinRange(app['price']))
         area.append(app['rating_count_tot']/1000)
 
-    scatterplot.scatter(x, y, s=area, c=colors, alpha=0.5)
+    scatterplot.scatter(x, y, s=area, c=colors, alpha=0.5, picker=True)
 
     #word cloud
     d = path.dirname(__file__)
@@ -160,8 +159,47 @@ def onclick(event):
             draw_subplots(genre_data)
             break
 
-cid = fig.canvas.mpl_connect('button_press_event', onclick)
+def annotate(axis, text, x, y):
+    text_annotation = Annotation(text, xy=(x, y), xycoords='data')
+    axis.add_artist(text_annotation)
 
+def onpick(event):
+    # step 1: take the index of the dot which was picked
+    ind = event.ind
+
+    # step 2: save the actual coordinates of the click, so we can position the text label properly
+    label_pos_x = event.mouseevent.xdata
+    label_pos_y = event.mouseevent.ydata
+
+    # just in case two dots are very close, this offset will help the labels not appear one on top of each other
+    offset = 0
+
+    # if the dots are to close one to another, a list of dots clicked is returned by the matplotlib library
+    for i in ind:
+        # step 3: take the label for the corresponding instance of the data
+        app = genre_data[i]
+        print(app)
+        label = "App: " + app['track_name'] + "\n" + "Rating: " + str(app['user_rating']) + "\n" + "Rating count: " + str(app['rating_count_tot']) + "\n" + "Price: " + str(app['price'])
+
+        # step 4: log it for debugging purposes
+        print ("index", i, label)
+
+        # step 5: create and add the text annotation to the scatterplot
+        annotate(
+            scatterplot,
+            label,
+            label_pos_x + offset,
+            label_pos_y + offset
+        )
+
+        # step 6: force re-draw
+        scatterplot.figure.canvas.draw_idle()
+
+        # alter the offset just in case there are more than one dots affected by the click
+        offset += 0.01
+
+fig.canvas.mpl_connect('button_press_event', onclick)
+fig.canvas.mpl_connect('pick_event', onpick)
 
 plt.show()
 plt.draw()
