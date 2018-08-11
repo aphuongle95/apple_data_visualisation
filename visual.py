@@ -12,8 +12,6 @@ import math
 
 fig = plt.figure()
 
-# fig = plt.figure(figsize=(10, 8))
-
 scatterplot = fig.add_subplot(2,2,2)
 wordplot = fig.add_subplot(2,2,4)
 
@@ -35,9 +33,6 @@ with open('description.csv', 'r') as csvfile:
 description_data.pop(0)
 countAppDict = {}
 appDict = {}
-
-# print(description_data[0])
-# print(data[0])
 
 def getDescription(app):
     for app_w_description in description_data:
@@ -62,7 +57,6 @@ for app in data:
 
 
 countAppDict = sorted(countAppDict.items(), key=itemgetter(1), reverse=True)
-# print(countAppDict)
 
 num_genre = len(countAppDict)
 grid_col = math.ceil(num_genre/2)
@@ -90,14 +84,7 @@ count = 0
 for app in countAppDict:
     ax = axes[count]
     count = count + 1
-    button = Button(ax, "")
-    # def next(self, event):
-    #     self.ind += 1
-    #     i = self.ind % len(freqs)
-    #     ydata = np.sin(2*np.pi*freqs[i]*t)
-    #     l.set_ydata(ydata)
-    #     plt.draw()
-    # button.on_clicked(callback.next)
+    # button = Button(ax, "")
 
     ax.text(0.1, 0.9,
             app[0],
@@ -111,38 +98,45 @@ for app in countAppDict:
             verticalalignment='top',
             transform = ax.transAxes)
 
-#scatter plot
 np.random.seed(19680801)
+def draw_subplots(genre_data):
+    x = []
+    y = []
+    area = []
+    N = len(genre_data)
+    colors = np.random.rand(N)
 
-# N = 50
-# x = np.random.rand(N)
-# y = np.random.rand(N)
-# colors = np.random.rand(N)
-# area = (30 * np.random.rand(N))**2  # 0 to 15 point radii
+    for app in genre_data:
+        def getRandomXinRange(user_rating):
+            u = user_rating*500
+            v = (np.random.randint(u,u+150))/500
+            return v
+        def getRandomYinRange(price):
+            u = price*500
+            v = (np.random.randint(u,u+150))/500
+            return v
+        x.append(getRandomXinRange(app['user_rating']))
+        y.append(getRandomYinRange(app['price']))
+        area.append(app['rating_count_tot']/1000)
 
-x = []
-y = []
-area = []
+    scatterplot.scatter(x, y, s=area, c=colors, alpha=0.5)
+    plt.draw()
+
+#scatter plot
 genre_data = appDict['Games']
-# print(genre_data[0])
-N = len(genre_data)
-colors = np.random.rand(N)
+draw_subplots(genre_data)
+def onclick(event):
+    for i in range(len(axes)):
+        ax = axes[i]
+        if event.inaxes == ax:
+            scatterplot.cla()
+            genre = countAppDict[i]
+            print(genre[0])
+            genre_data = appDict[genre[0]]
+            draw_subplots(genre_data)
+            break
 
-# print(N)
-for app in genre_data:
-    def getRandomXinRange(user_rating):
-        u = user_rating*500
-        v = (np.random.randint(u,u+150))/500
-        return v
-    def getRandomYinRange(price):
-        u = price*500
-        v = (np.random.randint(u,u+150))/500
-        return v
-    x.append(getRandomXinRange(app['user_rating']))
-    y.append(getRandomYinRange(app['price']))
-    area.append(app['rating_count_tot']/1000)
-
-scatterplot.scatter(x, y, s=area, c=colors, alpha=0.5)
+cid = fig.canvas.mpl_connect('button_press_event', onclick)
 
 #word cloud
 import io
@@ -154,20 +148,22 @@ from wordcloud import WordCloud
 
 d = path.dirname(__file__)
 
-f = open("description_genre.txt", "w")
-for app in genre_data:
-    if 'description' in app:
-        f.write(app['description'])
-        # print(app['description'])
+# open('description_genre.txt', 'w').close()
+# f = open("description_genre.txt", "w")
 
-text = io.open(path.join(d, 'description_genre.txt')).read()
+# for app in genre_data:
+#     if 'description' in app:
+#         f.write(app['description'])
+
+# text = io.open(path.join(d, 'description_genre.txt')).read()
 # Generate a word cloud image
 # The Symbola font includes most emoji
-font_path = path.join(d, 'Symbola.ttf')
-word_cloud = WordCloud(font_path=font_path).generate(text)
+# font_path = path.join(d, 'Symbola.ttf')
+# word_cloud = WordCloud(font_path=font_path).generate(text)
 
 # Display the generated image:
-wordplot.imshow(word_cloud)
-wordplot.axis("off")
+# wordplot.imshow(word_cloud)
+# wordplot.axis("off")
 
 plt.show()
+plt.draw()
