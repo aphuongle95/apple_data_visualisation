@@ -166,6 +166,7 @@ def draw_subplots(genre_data):
 draw_subplots(genre_data)
 
 def onclick(event):
+    global genre_data
     for i in range(len(axes)):
         ax = axes[i]
         found = False
@@ -192,6 +193,7 @@ def update_annot(label, label_pos_x, label_pos_y):
     annot.get_bbox_patch().set_alpha(0.4)
 
 def onpick(event):
+    global genre_data
     ind = event.ind
     label_pos_x = event.mouseevent.xdata
     label_pos_y = event.mouseevent.ydata
