@@ -1,2 +1,2 @@
 # apple_data_visualisation
-A small project to visualize apple selling data
+A small project to visualize apple application ratings
